@@ -22,7 +22,42 @@ public class Tile {
 
         public Tile getRand() {
 
+            int totalTiles = 0;
+            for (int quantity : quantities) {
+                totalTiles += quantity;
+            }
+        
+            int randomIndex = random.nextInt(totalTiles);
+        
+            int count = 0;
+            for (int i = 0; i < 26; i++) {
+                count += quantities[i];
+                if (randomIndex < count) {
+                    return tiles[i];
+                }
+            }
+        
+            return null;
         }
+
+        public Character getTile(char letter) {
+
+            if (letter < 'A' || letter > 'Z') {
+                System.out.println("Invalid letter provided.");
+                return null;
+            }
+
+            int index = letter - 'A';
+
+            if (quantities[index] > 0) {
+                quantities[index]--;
+                return letter;
+            } 
+            else {
+                return null;
+            }
+        }
+
 
         private int[] quantities;
         private Tile[] tiles; 
