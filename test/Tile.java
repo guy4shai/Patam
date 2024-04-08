@@ -1,5 +1,5 @@
 package test;
-
+import java.util.Random;
 
 public class Tile {
 
@@ -20,11 +20,19 @@ public class Tile {
 
     public static class Bag {
 
+        public Tile getRand() {
+
+        }
+
         private int[] quantities;
         private Tile[] tiles; 
+        private Random random;
+
+        
 
         private Bag() {
             quantities = new int[26];
+            random = new Random();
 
             quantities[0] = 9;
             quantities[1] = 2;
@@ -78,18 +86,7 @@ public class Tile {
             tiles[22] = new Tile('W', 4);
             tiles[23] = new Tile('X', 8);
             tiles[24] = new Tile('Y', 4);
-            tiles[25] = new Tile('Z', 10);
-
-
-
-
-
-           
-
-            
-
-           
-            
+            tiles[25] = new Tile('Z', 10);   
         }
 
     }
