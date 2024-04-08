@@ -19,12 +19,9 @@ public class Tile {
     }
 
     public static class Bag {
-        class Pair<T, U> {
-            public T first;
-            public U second;
-        }
+
         private int[] quantities;
-        private char[] tiles;
+        private Tile[] tiles; 
 
         private Bag() {
             quantities = new int[26];
@@ -56,9 +53,15 @@ public class Tile {
             quantities[24] = 2;
             quantities[25] = 1;
 
-            tiles = new char[26];
+            tiles[0] = new Tile('A', 1); 
+            tiles[1] = new Tile('B', 3); 
 
-            tiles[0] = new Pair<>('A', 1);
+
+           
+
+            
+
+           
             
         }
 
