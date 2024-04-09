@@ -1,5 +1,6 @@
 package test;
 import java.util.Random;
+import java.util.Arrays;
 
 public class Tile {
 
@@ -20,9 +21,25 @@ public class Tile {
 
     public static class Bag {
 
+        private int[] quantities;
+        private Tile[] tiles; 
+        private Random random;
+        private static Bag instance = null;
+
+        public static Bag getBag() {
+
+            if (instance == null) {
+                instance = new Bag();
+            }
+
+            return instance;
+        }
+
+
         public Tile getRand() {
 
             int totalTiles = 0;
+
             for (int quantity : quantities) {
                 totalTiles += quantity;
             }
@@ -30,8 +47,10 @@ public class Tile {
             int randomIndex = random.nextInt(totalTiles);
         
             int count = 0;
+
             for (int i = 0; i < 26; i++) {
                 count += quantities[i];
+
                 if (randomIndex < count) {
                     return tiles[i];
                 }
@@ -53,19 +72,47 @@ public class Tile {
                 quantities[index]--;
                 return letter;
             } 
+
             else {
                 return null;
             }
         }
 
+        public void put(Tile tile) {
 
-        private int[] quantities;
-        private Tile[] tiles; 
-        private Random random;
+            char letter = tile.letter;
 
+            if (letter < 'A' || letter > 'Z') {
+                throw new IllegalArgumentException("Invalid letter.");
+            }
+
+            int index = letter - 'A';
+
+            if (quantities[index] < 1 || quantities[index] >= 98) {
+                throw new IllegalArgumentException("No more tiles of this type available.");
+            }
+
+            quantities[index]++;
+        }   
         
+        public int size() {
+
+            int total = 0;
+
+            for (int quantity : quantities) {
+                total += quantity;
+            }
+
+            return Math.min(total, 98);
+        }
+        
+        public int[] getQuantities() {
+
+            return Arrays.copyOf(quantities, quantities.length);
+        }
 
         private Bag() {
+
             quantities = new int[26];
             random = new Random();
 
