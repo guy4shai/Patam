@@ -1,23 +1,24 @@
 package test;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Word {
 
-    private Tile[] tiles;
+    private Tile[] tiles[];
     private int row;
     private int col;
-    private boolean vertical;
+    private boolean isVertical;
 
-    public Word(Tile[] tiles, int row, int col, boolean vertical) {
-        this.tiles = Arrays.copyOf(tiles, tiles.length);
+    public Word(int row, int col, boolean isVertical) {
+        this.tiles = tiles;
         this.row = row;
         this.col = col;
-        this.vertical = vertical;
+        this.isVertical = isVertical;
     }
 
-    public Tile[] getTiles() {
-        return Arrays.copyOf(tiles, tiles.length);
+    public Tile[][] getTiles() {
+        return tiles;
     }
 
     public int getRow() {
@@ -29,18 +30,24 @@ public class Word {
     }
 
     public boolean isVertical() {
-        return vertical;
+        return isVertical;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        Word other = (Word) obj;
-        return row == other.row && col == other.col && vertical == other.vertical && Arrays.equals(tiles, other.tiles);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Word word = (Word) o;
+        return row == word.row && col == word.col && isVertical == word.isVertical && Objects.deepEquals(tiles, word.tiles);
+    }
+
+    @Override
+    public String toString() {
+        return "Word{" +
+                "tiles=" + Arrays.toString(tiles) +
+                ", row=" + row +
+                ", col=" + col +
+                ", isVertical=" + isVertical +
+                '}';
     }
 }

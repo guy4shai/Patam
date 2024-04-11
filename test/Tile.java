@@ -1,6 +1,6 @@
 package test;
-import java.util.Random;
-import java.util.Arrays;
+
+import java.util.Objects;
 
 public class Tile {
 
@@ -10,167 +10,145 @@ public class Tile {
         this.letter = letter;
         this.score = score;
     }
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+
+    public char getLetter() {
+        return letter;
     }
+
+    public int getScore() {
+        return score;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tile tile = (Tile) o;
+        return letter == tile.letter && score == tile.score;
+    }
+
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(letter, score);
     }
 
-    public static class Bag {
+    public static class Bag{
 
-        private int[] quantities;
-        private Tile[] tiles; 
-        private Random random;
-        private static Bag instance = null;
+        private int[] quantities = new int[26];
+        final private int[] quantities_game = {9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1};
+        private Tile[] tiles = new Tile[26];
+        private static Bag bag;
 
-        public static Bag getBag() {
+        private Bag(){
 
-            if (instance == null) {
-                instance = new Bag();
+            for(int i = 0; i < 26; i++){
+                this.quantities[i] = this.quantities_game[i];
             }
 
-            return instance;
+            for(int i = 0; i < 26; i++){
+                char letter = (char)('A' + i);
+                this.tiles[i] = new Tile(letter, findLetterValue(letter));
+            }
         }
 
-
-        public Tile getRand() {
-
-            int totalTiles = 0;
-
-            for (int quantity : quantities) {
-                totalTiles += quantity;
+        private int findLetterValue(char letter){
+            switch (letter) {
+                case 'A':
+                case 'E':
+                case 'I':
+                case 'L':
+                case 'N':
+                case 'O':
+                case 'R':
+                case 'S':
+                case 'T':
+                case 'U':
+                    return 1;
+                case 'D':
+                case 'G':
+                    return 2;
+                case 'B':
+                case 'C':
+                case 'M':
+                case 'P':
+                    return 3;
+                case 'F':
+                case 'H':
+                case 'V':
+                case 'W':
+                case 'Y':
+                    return 4;
+                case 'K':
+                    return 5;
+                case 'J':
+                case 'X':
+                    return 8;
+                case 'Q':
+                case 'Z':
+                    return 10;
             }
-        
-            int randomIndex = random.nextInt(totalTiles);
-        
-            int count = 0;
-
-            for (int i = 0; i < 26; i++) {
-                count += quantities[i];
-
-                if (randomIndex < count) {
-                    return tiles[i];
-                }
-            }
-        
-            return null;
+            return 0;
         }
 
-        public Character getTile(char letter) {
+        public Tile getRand(){
+            int rand = (int)(Math.random() * 26);
+            while (this.quantities[rand] == 0){
+                rand = (int)(Math.random() * 26);
+            }
+            this.quantities[rand]--;
+            return this.tiles[rand];
+        }
 
-            if (letter < 'A' || letter > 'Z') {
-                System.out.println("Invalid letter provided.");
+        public Tile getTile(char letter) {
+
+            int index  = (letter - 'A');
+            if(index < 0 || index > 25){
                 return null;
             }
-
-            int index = letter - 'A';
-
-            if (quantities[index] > 0) {
-                quantities[index]--;
-                return letter;
-            } 
-
-            else {
+            if(this.quantities[index] == 0){
                 return null;
             }
+            this.quantities[index]--;
+            return this.tiles[index];
         }
 
-        public void put(Tile tile) {
+        public void put(Tile tile){
 
-            char letter = tile.letter;
-
-            if (letter < 'A' || letter > 'Z') {
-                throw new IllegalArgumentException("Invalid letter.");
+            int index = (tile.getLetter() - 'A');
+            if(index < 0 || index > 25){
+                return;
             }
-
-            int index = letter - 'A';
-
-            if (quantities[index] < 1 || quantities[index] >= 98) {
-                throw new IllegalArgumentException("No more tiles of this type available.");
+            if(this.quantities[index] + 1 > this.quantities_game[index]){
+                return;
             }
+            this.quantities[index]++;
+        }
 
-            quantities[index]++;
-        }   
-        
-        public int size() {
-
-            int total = 0;
-
-            for (int quantity : quantities) {
-                total += quantity;
+        public int size(){
+            int size = 0;
+            for(int i = 0; i < 26; i++){
+                size+=this.quantities[i];
             }
-
-            return Math.min(total, 98);
-        }
-        
-        public int[] getQuantities() {
-
-            return Arrays.copyOf(quantities, quantities.length);
+            return size;
         }
 
-        private Bag() {
+        public int[] getQuantities(){
 
-            quantities = new int[26];
-            random = new Random();
-
-            quantities[0] = 9;
-            quantities[1] = 2;
-            quantities[2] = 2;
-            quantities[3] = 4;
-            quantities[4] = 12;
-            quantities[5] = 2;
-            quantities[6] = 3;
-            quantities[7] = 2;
-            quantities[8] = 9;
-            quantities[9] = 1;
-            quantities[10] = 1;
-            quantities[11] = 4;
-            quantities[12] = 2;
-            quantities[13] = 6;
-            quantities[14] = 8;
-            quantities[15] = 2;
-            quantities[16] = 1;
-            quantities[17] = 6;
-            quantities[18] = 4;
-            quantities[19] = 6;
-            quantities[20] = 4;
-            quantities[21] = 2;
-            quantities[22] = 2;
-            quantities[23] = 1;
-            quantities[24] = 2;
-            quantities[25] = 1;
-
-            tiles[0] = new Tile('A', 1); 
-            tiles[1] = new Tile('B', 3);
-            tiles[2] = new Tile('C', 3);
-            tiles[3] = new Tile('D', 2);
-            tiles[4] = new Tile('E', 1);
-            tiles[5] = new Tile('F', 4);
-            tiles[6] = new Tile('G', 2);
-            tiles[7] = new Tile('H', 4);
-            tiles[8] = new Tile('I', 1);
-            tiles[9] = new Tile('J', 8);
-            tiles[10] = new Tile('K', 5);
-            tiles[11] = new Tile('L', 1);
-            tiles[12] = new Tile('M', 3);
-            tiles[13] = new Tile('N', 1);
-            tiles[14] = new Tile('O', 1);
-            tiles[15] = new Tile('P', 3);
-            tiles[16] = new Tile('Q', 10);
-            tiles[17] = new Tile('R', 1);
-            tiles[18] = new Tile('S', 1);
-            tiles[19] = new Tile('T', 1);
-            tiles[20] = new Tile('U', 1);
-            tiles[21] = new Tile('V', 4);
-            tiles[22] = new Tile('W', 4);
-            tiles[23] = new Tile('X', 8);
-            tiles[24] = new Tile('Y', 4);
-            tiles[25] = new Tile('Z', 10);   
+            int[] clone = new int[26];
+            for(int i = 0; i < 26; i++){
+                clone[i] = this.quantities[i];
+            }
+            return clone;
         }
 
+        public static Bag getBag(){
+            if(bag == null){
+                bag = new Bag();
+            }
+            return bag;
+        }
     }
+
 
 }
+
